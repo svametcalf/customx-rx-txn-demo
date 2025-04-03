@@ -14,7 +14,7 @@ import reactor.test.StepVerifier;
 
 import java.time.Instant;
 
-@SpringBootTest
+@SpringBootTest(properties = "logging.level.org.springframework.transaction=TRACE")
 @Testcontainers
 class CustomRxDemoApplicationTests {
 
@@ -50,6 +50,7 @@ class CustomRxDemoApplicationTests {
 	@Test
 	void itSavesWithARegularMono() {
 		service.save(new CustomRxDemoApplication.SomeRecord(1, "some-text-here", Instant.now()))
+				.log()
 				.as(StepVerifier::create)
 				.expectNextCount(1)
 				.verifyComplete();
@@ -65,6 +66,7 @@ class CustomRxDemoApplicationTests {
 	public void itWorksWithACustomRxtype() {
 		service.saveWrapped(new CustomRxDemoApplication.SomeRecord(3, "some-other-text", Instant.now()))
 				.asMono()
+				.log()
 				.as(StepVerifier::create)
 				.expectNextCount( 1)
 				.verifyComplete();
